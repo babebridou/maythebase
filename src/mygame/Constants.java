@@ -4,9 +4,6 @@
  */
 package mygame;
 
-import com.fairyteller.ld25.entity.Entity;
-import com.jme3.bounding.BoundingVolume;
-
 /**
  *
  * @author Tom

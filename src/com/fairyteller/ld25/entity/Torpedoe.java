@@ -9,8 +9,10 @@ import com.fairyteller.ld25.control.EntityControl;
 import com.fairyteller.ld25.functions.PositionFunction;
 import com.fairyteller.ld25.control.interfaces.Damager;
 import com.fairyteller.ld25.control.interfaces.Despawner;
+import com.fairyteller.ld25.control.interfaces.Destroyable;
 import com.fairyteller.ld25.control.interfaces.Mover;
 import com.fairyteller.ld25.control.interfaces.Shooter;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -20,17 +22,34 @@ import com.jme3.scene.Spatial;
  *
  * @author Tom
  */
-public class Torpedoe extends Node implements Mover, Damager, Despawner {
-    TorpedoeClass torpedoeClass;
-
+public class Torpedoe extends Node implements Mover, Damager, Despawner, Destroyable {
+    EntityClass torpedoeClass;
     PositionFunction positionFunction;
     Shooter owner;
     double shootOffsetX;
     double shootOffsetY;
     double shootOffsetZ;
+    Vector3f azimuth;
+    Geometry spawn;
 
+    int health = 0;
+    int damage = 1;
+    boolean isDestroyed = false;
+    double nextHitPossible = 0;
+    double hitInvulnerability = 0.2d;
+    boolean justGotHit = false;
+    boolean isInvulnerable = false;
+    
+    double fuel = 2d;
+
+    public TorpedoeClass getTorpedoeClass() {
+        return (TorpedoeClass)torpedoeClass;
+    }
+    
     public Torpedoe(EntityClass entityClass, Shooter owner, PositionFunction function) {
-        Geometry spawn = entityClass.getGeometry().clone();
+        this.torpedoeClass = entityClass;
+        spawn = (Geometry)entityClass.getGeometry().clone();
+        spawn.setName("torpedoe");
         setOwner(owner);
         setPositionFunction(function);
         Vector3f local = ((Spatial)owner).getLocalTranslation().add(owner.getShootOffsets());
@@ -38,6 +57,7 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner {
         setShootOffsetX(local.x);
         setShootOffsetY(local.y);
         setShootOffsetZ(local.z);
+        this.azimuth = owner.getAim();
         addControl(new EntityControl());
         spawn.setMaterial(entityClass.getMaterial());
         attachChild(spawn);
@@ -84,7 +104,13 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner {
     }
 
     public void updateDamageBox() {
-        CollisionZone.getInstance().mergeKillzones(getOwner(), getWorldBound());
+        BoundingVolume bv = spawn.getWorldBound();
+//            System.out.println(owner.toString()+" : "+bv.getCenter().x+", "+bv.getCenter().y);
+        CollisionZone.getInstance().mergeKillzones(getOwner(), bv, this);
+    }
+    
+    public Spatial getGeometry(){
+        return spawn;
     }
 
     public double getMoveOffsetX() {
@@ -100,11 +126,91 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner {
     }
 
     public boolean shouldDespawn(double lifetime) {
-        return lifetime>0.5d;
+        return lifetime>fuel;
     }
 
     public void despawn() {
         detachAllChildren();
         removeFromParent();
     }
+
+    public Vector3f getAzimuth() {
+       return azimuth;
+    }
+
+    public void hit(int damage) {
+        if(!isInvulnerable && !justGotHit){
+          justGotHit = true;
+          incomingDamage+=damage;
+        }
+    }
+
+    public void setDestroyed(boolean destroyed){
+        this.isDestroyed = destroyed;
+    }
+    public boolean isDestroyed(){
+        return isDestroyed||health<0;
+    }
+    public void destroy(){
+        System.out.println("Hero destroyed!");
+        
+    }
+    
+    public int getHealth() {
+        return health;
+    }
+
+    public int getDamage() {
+        return this.damage;
+    }
+
+    public double getNextHitPossible() {
+        return nextHitPossible;
+    }
+    
+    public boolean isInvulnerable(){
+        return isInvulnerable;
+    }
+
+    public double getHitInvulnerability() {
+        return hitInvulnerability;
+    }
+
+    public void setHitInvulnerability(double hitInvulnerability) {
+        this.hitInvulnerability = hitInvulnerability;
+    }
+
+    public void setInvulnerable(boolean isInvulnerable) {
+        this.isInvulnerable = isInvulnerable;
+    }
+
+    public void setNextHitPossible(double nextHitPossible) {
+        this.nextHitPossible = nextHitPossible;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public boolean isJustGotHit() {
+        return justGotHit;
+    }
+
+    int incomingDamage = 0;
+    
+    public int getIncomingDamage() {
+        return incomingDamage;
+    }
+    public void setIncomingDamage(int incomingDamage){
+        this.incomingDamage = incomingDamage;
+    }
+
+    public void setJustGotHit(boolean justGotHit) {
+        this.justGotHit = justGotHit;
+    }
+
 }

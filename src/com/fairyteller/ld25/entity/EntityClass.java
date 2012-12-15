@@ -6,7 +6,7 @@ package com.fairyteller.ld25.entity;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
-import com.jme3.scene.Geometry;
+import com.jme3.scene.Spatial;
 
 /**
  *
@@ -14,6 +14,8 @@ import com.jme3.scene.Geometry;
  */
 public interface EntityClass {
     public Material getMaterial();
-    public Geometry getGeometry();
+    public Spatial getGeometry();
     public void init(AssetManager assetManager);
+    public int getBaseDamage();
+    public int getBaseHealth();
 }

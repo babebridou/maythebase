@@ -14,4 +14,6 @@ public interface Shooter {
     public boolean shouldFire(double lifetime);
     public void shoot(double lifetime);
     public Vector3f getShootOffsets();
+    public Vector3f getAim();
+    public int getDamage();
 }
