@@ -73,10 +73,14 @@ public class ShipClass implements EntityClass {
         return material;
     }
 
+	public Box createBox(){
+	  return new Box(Vector3f.ZERO, 0.40f, 0.40f, 0f);
+	}
+	
     public void init(AssetManager assetManager) {
         if(isInit)
             return;
-        Box box = new Box(Vector3f.ZERO, 0.40f, 0.40f, 0f);
+        Box box = createBox();
         if(geometry==null)
         geometry = new Geometry("Box", box);
 		explosion = new Geometry("Box", box);

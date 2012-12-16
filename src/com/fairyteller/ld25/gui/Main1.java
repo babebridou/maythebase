@@ -1,5 +1,6 @@
 package com.fairyteller.ld25.gui;
 
+import com.fairyteller.ld25.entity.Constants;
 import mygame.*;
 import com.fairyteller.ld25.collision.CollisionZone;
 import com.fairyteller.ld25.entity.EntityClass;

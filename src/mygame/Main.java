@@ -1,24 +1,14 @@
 package mygame;
 
-import com.fairyteller.ld25.collision.CollisionZone;
-import com.fairyteller.ld25.entity.EntityClass;
-import com.fairyteller.ld25.entity.Team;
-import com.fairyteller.ld25.functions.PositionFunction;
-import com.fairyteller.ld25.entity.Wave;
+import com.fairyteller.ld25.entity.Constants;
 import com.fairyteller.ld25.gui.Level01Controller;
 import com.fairyteller.ld25.gui.StartMenuController;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.ActionListener;
-import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.RenderManager;
 import de.lessvoid.nifty.Nifty;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,6 +63,8 @@ public class Main extends SimpleApplication {
         inputManager.addMapping("Wave0", new KeyTrigger(KeyInput.KEY_1));
         inputManager.addMapping("Wave1", new KeyTrigger(KeyInput.KEY_2));
 		inputManager.addMapping("Wave2", new KeyTrigger(KeyInput.KEY_3));
+		inputManager.addMapping("Wave3", new KeyTrigger(KeyInput.KEY_4));
+		inputManager.addMapping("Wave4", new KeyTrigger(KeyInput.KEY_5));
 //        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
 //        inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_SPACE),
 //                new MouseButtonTrigger(MouseInput.BUTTON_LEFT));

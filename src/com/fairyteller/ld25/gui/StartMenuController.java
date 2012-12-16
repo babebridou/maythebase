@@ -13,12 +13,11 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.AnalogListener;
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import java.util.Random;
-import mygame.Constants;
+import com.fairyteller.ld25.entity.Constants;
 
 /**
  *
@@ -64,7 +63,7 @@ public class StartMenuController extends AbstractAppState implements ScreenContr
   }
 
   public void addListeners(){
-	app.getInputManager().addListener(actionListener, new String[]{"Pause", "Wave0", "Wave1", "Wave2"});
+	app.getInputManager().addListener(actionListener, new String[]{"Pause", "Wave0", "Wave1", "Wave2", "Wave3", "Wave4"});
   }
   
   public void removeListeners(){
@@ -101,7 +100,7 @@ public class StartMenuController extends AbstractAppState implements ScreenContr
 	  playtime +=tpf;
 
 	  if(playtime>4d){
-		level.start();
+		level.start(tpf);
 	  }
 	  if(isActive&&!delegate.isCleaning() && !Constants.cleaning){
 		int i = rand.nextInt(100);
@@ -129,6 +128,27 @@ public class StartMenuController extends AbstractAppState implements ScreenContr
 		  }
 		  if (name.equals("Wave2") && !keyPressed) {
 			level.summonWave(2);
+		  }
+		  if (name.equals("Wave3") && !keyPressed) {
+			level.summonWave(3);
+		  }
+		  if (name.equals("Wave4") && !keyPressed) {
+			level.summonWave(4);
+		  }
+		  if (name.equals("Wave5") && !keyPressed) {
+			level.summonWave(5);
+		  }
+		  if (name.equals("Wave6") && !keyPressed) {
+			level.summonWave(6);
+		  }
+		  if (name.equals("Wave7") && !keyPressed) {
+			level.summonWave(7);
+		  }
+		  if (name.equals("Wave8") && !keyPressed) {
+			level.summonWave(8);
+		  }
+		  if (name.equals("Wave9") && !keyPressed) {
+			level.summonWave(9);
 		  }
 
 		} else {

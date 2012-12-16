@@ -15,6 +15,11 @@ public class StartMenu extends AbstractLevel{
   public StartMenu() {
 	super();
   }
+
+  @Override
+  public void updateWaves() {
+	
+  }
  
   
   

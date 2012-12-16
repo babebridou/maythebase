@@ -39,7 +39,7 @@ public class Ship extends Node implements Mover, Shooter, Despawner, Destroyable
   int health;
   int damage;
   double nextHitPossible = 0;
-  double hitInvulnerability = 0.2d;
+  double hitInvulnerability = 0.0d;
   boolean justGotHit = false;
   boolean isInvulnerable = false;
 //  Ship subShip;

@@ -5,7 +5,6 @@
 package com.fairyteller.ld25.entity.gear;
 
 import com.fairyteller.ld25.entity.Ship;
-import com.fairyteller.ld25.entity.ShipClass;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
@@ -13,7 +12,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
 
@@ -21,60 +19,30 @@ import com.jme3.texture.Texture;
  *
  * @author Tom
  */
-public class LeftCannonClass extends ShipClass {
+public class LeftRocketLauncherCannonClass extends LeftCannonClass {
 
-  boolean isInit = false;
-  Material material;
-  Material materialHit;
-  Geometry geometry;
-  ColorRGBA color;
-  int baseDamage;
-  int baseHealth;
-
-  public LeftCannonClass() {
+  public LeftRocketLauncherCannonClass() {
 	this(null);
   }
 
-  public LeftCannonClass(ColorRGBA color) {
-	this(null, null, color, 1, 10, 0.5d);
-	this.color = color;
+  public LeftRocketLauncherCannonClass(ColorRGBA color) {
+	this(null, null, color, 7, 10, 2f);
   }
 
-  public LeftCannonClass(ColorRGBA color, int baseDamage, int baseHealth, double baseShootDelay) {
+  public LeftRocketLauncherCannonClass(ColorRGBA color, int baseDamage, int baseHealth, double baseShootDelay) {
 	this(null, null, color, baseDamage, baseHealth, baseShootDelay);
-	this.color = color;
   }
 
-  public LeftCannonClass(Material material, Geometry geometry, ColorRGBA color, int baseDamage, int baseHealth, double baseShootDelay) {
-	this.material = material;
-	this.geometry = geometry;
-	this.color = color;
-	this.baseDamage = baseDamage;
-	this.baseHealth = baseHealth;
-	setBaseShootDelay(baseShootDelay);
+  public LeftRocketLauncherCannonClass(Material material, Geometry geometry, ColorRGBA color, int baseDamage, int baseHealth, double baseShootDelay) {
+	super(material, geometry, color, baseDamage, baseHealth, baseShootDelay);
   }
 
   @Override
-  public double getBaseFuel() {
-	return 999d;
-  }
-  
-  
-  
-
-  public Spatial getGeometry() {
-	return geometry;
-  }
-
-  public Material getMaterial() {
-	return material;
-  }
-
   public void init(AssetManager assetManager) {
 	if (isInit) {
 	  return;
 	}
-	Box box = new Box(Vector3f.ZERO, 0.10f, 0.20f, 0f);
+	Box box = new Box(Vector3f.ZERO, 0.15f, 0.80f, 0f);
 	if (geometry == null) {
 	  geometry = new Geometry("Box", box);
 	}
@@ -97,34 +65,18 @@ public class LeftCannonClass extends ShipClass {
         
 	
 	isInit = true;
-  }
-
-  @Override
-  public void toggle(boolean hit, Spatial spatial) {
-	if (hit) {
-	  spatial.setMaterial(materialHit);
-	} else {
-	  spatial.setMaterial(material);
-	}
-  }
-
-  @Override
-  public int getBaseDamage() {
-	return this.baseDamage;
-  }
-
-  @Override
-  public int getBaseHealth() {
-	return this.baseHealth;
-  }
-
+  } 
+  
+  
   @Override
   public void initShootOffsets(Ship ship, Ship cannon) {
-	cannon.setShootOffsets(Vector3f.UNIT_X.mult(ship.getAzimuth().normalize().dot(Vector3f.UNIT_Y) * 0.5f));
+	cannon.setShootOffsets(Vector3f.UNIT_X.mult(ship.getAzimuth().normalize().dot(Vector3f.UNIT_Y) * 0.3f)
+		.add(Vector3f.UNIT_Z.mult(1f))
+		);
   }
-
+  
   @Override
-  public boolean isHoming(){
+  public boolean isHoming() {
 	return true;
   }
 }
