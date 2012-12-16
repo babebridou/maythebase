@@ -4,10 +4,13 @@
  */
 package com.fairyteller.ld25.entity;
 
+import com.fairyteller.ld25.functions.PositionFunction;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
+import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
@@ -23,7 +26,21 @@ public class TorpedoeClass implements EntityClass{
     Material materialHit;
     Geometry geometry;
     ColorRGBA color;
+	PositionFunction function = new PositionFunction() {
 
+		public double getX(double t, double dt) {
+		  return 0d;
+		}
+
+		public double getY(double t, double dt) {
+		  return 4d*t;
+		}
+
+		public double getZ(double t, double dt) {
+		  return 0d;
+		}
+	  };
+	
     public TorpedoeClass() {
         super();
     }
@@ -56,6 +73,12 @@ public class TorpedoeClass implements EntityClass{
         materialHit.setColor("Color", ColorRGBA.White);
         geometry = new Geometry("missile", box);
         geometry.setModelBound(box.getBound());
+		
+		material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		materialHit.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		geometry.setQueueBucket(Bucket.Transparent);
+        
+		
         this.isInit = true;
     }
     public void toggle(boolean hit, Spatial spatial){
@@ -72,8 +95,25 @@ public class TorpedoeClass implements EntityClass{
     public int getBaseHealth() {
         return 0;
     }
+
+	public double getBaseFuel() {
+	  return 2d;
+	}
+	
+
+  public void initShootOffsets(Ship ship, Ship cannon) {
+	throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  public double getBaseShootDelay() {
+	throw new UnsupportedOperationException("Not supported yet.");
+  }
     
-    
+  
+  
+  public PositionFunction getPositionFunction() {
+	return function;
+  }
     
     
 }

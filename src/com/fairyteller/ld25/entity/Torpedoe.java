@@ -47,23 +47,35 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner, Destroy
     }
     
     public Torpedoe(EntityClass entityClass, Shooter owner, PositionFunction function) {
+		this.health = entityClass.getBaseHealth();
+		this.damage = entityClass.getBaseDamage();
+		this.fuel = entityClass.getBaseFuel();
         this.torpedoeClass = entityClass;
         spawn = (Geometry)entityClass.getGeometry().clone();
         spawn.setName("torpedoe");
         setOwner(owner);
         setPositionFunction(function);
-        Vector3f local = ((Spatial)owner).getLocalTranslation().add(owner.getShootOffsets());
-        setLocalTranslation(local.x, local.y, local.z);
-        setShootOffsetX(local.x);
-        setShootOffsetY(local.y);
-        setShootOffsetZ(local.z);
-        this.azimuth = owner.getAim();
+//        Vector3f local = ((Spatial)owner).getLocalTranslation().add(owner.getShootOffsets());
+//        setLocalTranslation(local.x, local.y, local.z);
+//        setShootOffsetX(local.x);
+//        setShootOffsetY(local.y);
+//        setShootOffsetZ(local.z);
+//        this.azimuth = owner.getAim();
 //		rotate(0, 0, getAzimuth().angleBetween(Vector3f.UNIT_Y));
         addControl(new EntityControl());
         spawn.setMaterial(entityClass.getMaterial());
         attachChild(spawn);
     }
 
+	public void initPositionAt(Ship spatial){
+		Vector3f local = ((Spatial)spatial).getLocalTranslation().add(spatial.getShootOffsets()).add(owner.getShootOffsets());
+        setLocalTranslation(local.x, local.y, local.z);
+        setShootOffsetX(local.x);
+        setShootOffsetY(local.y);
+        setShootOffsetZ(local.z);
+        this.azimuth = spatial.getAim();
+	}
+	
     public Shooter getOwner() {
         return owner;
     }

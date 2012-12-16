@@ -28,7 +28,7 @@ public class Ship extends Node implements Mover, Shooter, Despawner, Destroyable
   EntityClass projectileClass;
   EntityClass shipClass;
   double nextshoot = 1d;
-  double delay = 0.2d;
+  double shootDelay = 0.2d;
   double fuel = 30d;
   Vector3f azimuth;
   boolean isDestroyed = false;
@@ -52,8 +52,45 @@ public class Ship extends Node implements Mover, Shooter, Despawner, Destroyable
 	this.azimuth = azimuth;
 	this.wave = wave;
 	this.team = team;
+	setShootDelay(shipClass.getBaseShootDelay());
   }
 
+  public Ship getSubShip() {
+	return subShip;
+  }
+
+  public void attachSubShip(final Ship subShip){
+	if(subShip.getParent()!=null)
+	  subShip.getParent().detachChild(subShip);
+	subShip.team = team;
+	subShip.setPositionFunction(new PositionFunction() {
+
+	  public double getX(double t, double dt) {
+		return -subShip.getShootOffsets().x;
+	  }
+
+	  public double getY(double t, double dt) {
+		return 0d;
+	  }
+
+	  public double getZ(double t, double dt) {
+		return 0d;
+	  }
+	});
+	subShip.setAzimuth(getAzimuth().negate());
+	attachChild(subShip);
+  }
+
+  public double getShootDelay() {
+	return shootDelay;
+  }
+  
+  
+  
+  public void setShootDelay(double delay){
+	this.shootDelay = delay;
+  }
+  
   public void setPositionFunction(PositionFunction positionFunction) {
 	this.positionFunction = positionFunction;
   }
@@ -66,44 +103,64 @@ public class Ship extends Node implements Mover, Shooter, Despawner, Destroyable
 	this.shipClass.init(assetManager);
 	setDamage(this.shipClass.getBaseDamage());
 	setHealth(this.shipClass.getBaseHealth());
-	this.projectileClass.init(assetManager);
+	setFuel(this.shipClass.getBaseFuel());
+	if(this.projectileClass!=null){
+	  this.projectileClass.init(assetManager);
+	}
 	shipSpatial = shipClass.getGeometry().clone();
-	rotate(0, 0, getAzimuth().angleBetween(Vector3f.UNIT_Y));
 	attachChild(shipSpatial);
-
+	rotate(0, 0, getAzimuth().angleBetween(Vector3f.UNIT_Y));
   }
 
   public boolean shouldFire(double lifetime) {
 	return lifetime > nextshoot;
   }
 
-  public void shoot(double lifetime) {
-	Torpedoe t = null;
+  protected void shoot(final Ship s, Torpedoe t){
+	if(t==null){
+	  PositionFunction f = s.projectileClass.getPositionFunction()!=null?s.projectileClass.getPositionFunction():new PositionFunction() {
 
-	t = new Torpedoe(projectileClass, this, new PositionFunction() {
+		public double getX(double t, double dt) {
+		  return 0d;
+		}
 
-	  public double getX(double t, double dt) {
-		return 0d;
-	  }
+		public double getY(double t, double dt) {
+		  return 4d*t;
+		}
 
-	  public double getY(double t, double dt) {
-		return 4d*t;
-	  }
-
-	  public double getZ(double t, double dt) {
-		return 0d;
-	  }
-	});
-
-	if (t != null) {
-	  nextshoot += delay;
-	  getParent().attachChild(t);
+		public double getZ(double t, double dt) {
+		  return 0d;
+		}
+	  };
+	  t = new Torpedoe(s.projectileClass, s, f);
 	}
+	if(!(getParent() instanceof Ship)){
+	  if (t != null) {
+		s.nextshoot += s.shootDelay;
+		t.initPositionAt(this);
+		getParent().attachChild(t);
+		return;
+	  }  
+	} 
+	((Ship)getParent()).shoot(s, t);
+  }
+  
+  public void shoot(double lifetime) {
+	shoot(this, null);
   }
 
+  Vector3f shootOffsets;
   public Vector3f getShootOffsets() {
-	return getAzimuth().mult(0.5f);
+	if(shootOffsets==null){
+	  shootOffsets = new Vector3f(0.0f, 0.5f, 0.0f);//getAzimuth().mult(0.5f);
+	}
+	return shootOffsets;
   }
+
+  public void setShootOffsets(Vector3f shootOffsets) {
+	this.shootOffsets = shootOffsets;
+  }
+  
 
   public boolean shouldDespawn(double lifetime) {
 	return lifetime > fuel;
@@ -153,11 +210,22 @@ public class Ship extends Node implements Mover, Shooter, Despawner, Destroyable
   }
   Vector3f aim = null;
   
+  private Vector3f getAimRecursive(Spatial s){
+	if(!(s.getParent() instanceof Ship)){
+	  if(aim==null)
+		return getAzimuth();
+	  return aim.clone();
+	} else {
+	  return getAimRecursive(s.getParent());
+	}
+  }
+  
   public Vector3f getAim() {
-	if(aim==null)
-	  return getAzimuth();
-	
-	return aim;
+	return getAimRecursive(this);
+//	if(aim==null)
+//	  return getAzimuth();
+//	
+//	return aim;
   }
 
   public Spatial getGeometry() {
@@ -227,6 +295,16 @@ public class Ship extends Node implements Mover, Shooter, Despawner, Destroyable
   public void setHealth(int health) {
 	this.health = health;
   }
+  
+  public void setFuel(double fuel){
+	this.fuel = fuel;
+  }
+
+  public double getFuel() {
+	return fuel;
+  }
+  
+  
 
   public boolean isJustGotHit() {
 	return justGotHit;
@@ -247,16 +325,20 @@ public class Ship extends Node implements Mover, Shooter, Despawner, Destroyable
 
   public Vector3f seek() {
 	if(team!=null&&team.currentTarget!=null){
-	  Vector3f v = team.currentTarget.getLocalTranslation();
+	  Vector3f v = team.currentTarget.getWorldTranslation();
 	  return v;
 	}
 	return null;
   }
   
   public void aim(Vector3f target){
-	aim = target==null?null:target.subtract(getLocalTranslation());
+	aim = target==null?null:target.subtract(getWorldTranslation());
+//	aim = target;
 	if(aim!=null){
-	  aim.normalizeLocal();
+//	  aim.normalizeLocal();
+	  
+	  //lookAt(aim, Vector3f.UNIT_Z);
+	  
 	}
   }
 

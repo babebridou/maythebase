@@ -1,11 +1,14 @@
 package mygame;
 
 import com.fairyteller.ld25.collision.CollisionZone;
+import com.fairyteller.ld25.entity.EntityClass;
 import com.fairyteller.ld25.entity.ShipClass;
 import com.fairyteller.ld25.entity.Team;
 import com.fairyteller.ld25.entity.TorpedoeClass;
 import com.fairyteller.ld25.functions.PositionFunction;
 import com.fairyteller.ld25.entity.Wave;
+import com.fairyteller.ld25.entity.gear.LeftCannonClass;
+import com.fairyteller.ld25.entity.gear.RightCannonClass;
 import com.jme3.app.SimpleApplication;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -14,7 +17,10 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.sun.corba.se.impl.orbutil.closure.Constant;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +30,7 @@ public class Main extends SimpleApplication {
     Wave heroWave;
 //    Ship hero;
     LinkedList<Wave> waves;
-    PositionFunction function;
+//    PositionFunction function;
     boolean isRunning = true;
 
     public static void main(String[] args) {
@@ -36,6 +42,15 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+	  List<EntityClass> projectileClasses = new ArrayList<EntityClass>();
+	  List<EntityClass> cannonClasses = new ArrayList<EntityClass>();
+	  cannonClasses.add(Constants.leftCannon);
+	  projectileClasses.add(Constants.cyanTorpedoe);
+	  cannonClasses.add(Constants.rightCannon);
+	  projectileClasses.add(Constants.cyanTorpedoe);
+	  
+	  
+	  
 	  red = new Team();
 	  blue = new Team();
         waves = new LinkedList<Wave>();
@@ -55,30 +70,21 @@ public class Main extends SimpleApplication {
                 return 0d;
             }
         };
-        heroWave = new Wave(blue, "hero", 1, functionHeroWave, 0d, 0d, 3d, 0d, new TorpedoeClass(ColorRGBA.Cyan), new ShipClass(ColorRGBA.Cyan, 3, 100), Vector3f.UNIT_Y.negate());
+        heroWave = new Wave(blue, "hero", 1, functionHeroWave, 0d, 0d, 3d, 0d, 
+			projectileClasses, 
+			Constants.cyanShip,
+			cannonClasses,
+			Vector3f.UNIT_Y.negate());
         heroWave.create(assetManager);
 
 //        hero = new Ship("hero");
 //        hero.create(assetManager);
 //        hero.setMoveOffsetY(3d);
 
-        function = new PositionFunction() {
-
-            public double getX(double t, double tpf) {
-                return 0d;//Math.cos(t % (2d * Math.PI));
-            }
-
-            public double getY(double t, double tpf) {
-                return 0d;//Math.sin(t % (2d * Math.PI));
-            }
-
-            public double getZ(double t, double tpf) {
-                return 0d;
-            }
-        };
-        Wave wave = new Wave(red, "me", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
-        wave.create(assetManager);
-        waves.push(wave);
+        
+//        Wave wave = new Wave(red, "me", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
+//        wave.create(assetManager);
+//        waves.push(wave);
         flyCam.setEnabled(false);
 
 //        EntityControl control = new EntityControl();
@@ -87,13 +93,14 @@ public class Main extends SimpleApplication {
 
         // You can map one or several inputs to one named action
         inputManager.addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
-        inputManager.addMapping("Wave0", new KeyTrigger(KeyInput.KEY_0));
-        inputManager.addMapping("Wave1", new KeyTrigger(KeyInput.KEY_1));
+        inputManager.addMapping("Wave0", new KeyTrigger(KeyInput.KEY_1));
+        inputManager.addMapping("Wave1", new KeyTrigger(KeyInput.KEY_2));
+		inputManager.addMapping("Wave2", new KeyTrigger(KeyInput.KEY_3));
 //        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_K));
 //        inputManager.addMapping("Rotate", new KeyTrigger(KeyInput.KEY_SPACE),
 //                new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 //        // Add the names to the action listener.
-        inputManager.addListener(actionListener, new String[]{"Pause", "Wave0", "Wave1"});
+        inputManager.addListener(actionListener, new String[]{"Pause", "Wave0", "Wave1", "Wave2"});
 //        inputManager.addListener(analogListener, new String[]{"Wave0", "Wave1"});
 
         //      
@@ -136,12 +143,91 @@ public class Main extends SimpleApplication {
             } else {
                 if (isRunning) {
                     if (name.equals("Wave0")&& !keyPressed) {
-                        Wave wave = new Wave(red, "wave0", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
+					  
+					  PositionFunction function = new PositionFunction() {
+
+						  public double getX(double t, double tpf) {
+							  return Math.cos(t % (2d * Math.PI));
+						  }
+
+						  public double getY(double t, double tpf) {
+							  return t/2.0d;//Math.sin(t % (2d * Math.PI));
+						  }
+
+						  public double getZ(double t, double tpf) {
+							  return 0d;
+						  }
+					  };
+					  
+					  List<EntityClass> projectileClasses = new ArrayList<EntityClass>();
+					  List<EntityClass> cannonClasses = new ArrayList<EntityClass>();
+					  cannonClasses.add(Constants.leftCannon);
+					  projectileClasses.add(Constants.cyanTorpedoe);
+                        Wave wave = new Wave(red, "wave0", 4, function, 1d, 3d, -2d, 0, 
+							projectileClasses, 
+							Constants.grayShip,
+							cannonClasses,
+							Vector3f.UNIT_Y);
                         wave.create(assetManager);
                         waves.push(wave);
                     }
                     if (name.equals("Wave1")&& !keyPressed) {
-                        Wave wave = new Wave(red, "wave1", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
+					  
+					  PositionFunction function = new PositionFunction() {
+
+						  public double getX(double t, double tpf) {
+							  return t*t;
+						  }
+
+						  public double getY(double t, double tpf) {
+							  return 0d;//Math.sin(t % (2d * Math.PI));
+						  }
+
+						  public double getZ(double t, double tpf) {
+							  return 0d;
+						  }
+					  };
+					  
+					  List<EntityClass> projectileClasses = new ArrayList<EntityClass>();
+						List<EntityClass> cannonClasses = new ArrayList<EntityClass>();
+						cannonClasses.add(Constants.rightCannon);
+						projectileClasses.add(Constants.greenTorpedoe);
+                        Wave wave = new Wave(red, "wave1", 3, function, 1d, -5d, -4d, 0, 
+							projectileClasses, 
+							Constants.greenShip, 
+							cannonClasses,
+							Vector3f.UNIT_Y);
+                        wave.create(assetManager);
+                        waves.push(wave);
+                    }
+					if (name.equals("Wave2")&& !keyPressed) {
+					  
+					  PositionFunction function = new PositionFunction() {
+
+						  public double getX(double t, double tpf) {
+							  return 0.1d*Math.sin(t);
+						  }
+
+						  public double getY(double t, double tpf) {
+							  return Math.log(t);//Math.sin(t % (2d * Math.PI));
+						  }
+
+						  public double getZ(double t, double tpf) {
+							  return 0d;
+						  }
+					  };
+					  
+					  List<EntityClass> projectileClasses = new ArrayList<EntityClass>();
+						List<EntityClass> cannonClasses = new ArrayList<EntityClass>();
+						cannonClasses.add(Constants.leftCannon);
+						projectileClasses.add(Constants.redTorpedoe);
+						cannonClasses.add(Constants.rightCannon);
+						projectileClasses.add(Constants.redTorpedoe);
+                        Wave wave = new Wave(red, "wave2", 1, function, 1d, 0d, -4d, 0, 
+							projectileClasses, 
+							Constants.redShip, 
+							cannonClasses,
+							Vector3f.UNIT_Y);
                         wave.create(assetManager);
                         waves.push(wave);
                     }

@@ -26,8 +26,9 @@ public class Wave {
   double offsetX;
   double offsetY;
   double offsetZ;
-  EntityClass projectileClass;
+  List<EntityClass> projectileClasses;
   EntityClass shipClass;
+  List<EntityClass> cannonClasses;
   Vector3f azimuth;
   String name;
 
@@ -38,8 +39,9 @@ public class Wave {
 	  double offsetX,
 	  double offsetY,
 	  double offsetZ,
-	  EntityClass projectileClass,
+	  List<EntityClass> projectileClasses,
 	  EntityClass shipClass,
+	  List<EntityClass> cannonClasses,
 	  Vector3f azimuth) {
 	this.count = count;
 	this.function = function;
@@ -48,7 +50,8 @@ public class Wave {
 	this.offsetX = offsetX;
 	this.offsetY = offsetY;
 	this.offsetZ = offsetZ;
-	this.projectileClass = projectileClass;
+	this.projectileClasses = projectileClasses;
+	this.cannonClasses = cannonClasses;
 	this.shipClass = shipClass;
 	this.azimuth = azimuth;
 	this.name = name;
@@ -58,13 +61,38 @@ public class Wave {
   public void create(AssetManager assetManager) {
 	this.ships = new LinkedList<Ship>();
 	for (int i = 0; i < count; i++) {
-	  Ship ship = new Ship(team, name + "_" + i, this, projectileClass, shipClass, azimuth);
+	  Ship ship = new Ship(team, name + "_" + i, this, null, shipClass, azimuth){
+		@Override
+		public boolean shouldFire(double lifetime) {
+		  return false;
+		}
+
+		@Override
+		public Vector3f getShootOffsets() {
+		  return getAzimuth().mult(0.5f);
+		}
+
+		
+	  };
 	  ship.create(assetManager);
 	  ship.addControl(new EntityControl());
 	  ship.setMoveOffsetX(offsetX);
 	  ship.setMoveOffsetY(offsetY);
 	  ship.setMoveOffsetZ(offsetZ);
 	  ship.setPositionFunction(function);
+	  for(int j = 0; j<cannonClasses.size();j++){
+		EntityClass cc = cannonClasses.get(j);
+		EntityClass projectileClass = projectileClasses.get(j);
+		Ship cannon = new Ship(team, name + "_cannonR_" + i, this, projectileClass, cc, azimuth);
+	  cc.initShootOffsets(ship, cannon);
+	  ship.attachSubShip(cannon);
+	  cannon.create(assetManager);
+	  cannon.rotate(0, 0, (float)Math.acos(cannon.getAzimuth().normalize().dot(Vector3f.UNIT_Y)));
+	  
+//	  cannon.setShootOffsets(Vector3f.UNIT_X.mult(ship.getAzimuth().normalize().dot(Vector3f.UNIT_Y)*0.5f));
+	  cannon.addControl(new EntityControl());
+	  }
+	  
 	  this.ships.push(ship);
 	}
 

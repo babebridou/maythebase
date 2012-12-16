@@ -34,7 +34,8 @@ public class EntityControl extends AbstractControl {
   
   static final double computeX(double x, double y, double a){
 	double A = a;
-	double X = (float) Math.cos(A)*(x * Math.cos(A) - 2d*y * Math.sin(A));
+//	double X = (float) Math.cos(A)*(x * Math.cos(A) - y * Math.sin(A));
+	double X = (float) x * Math.cos(A) + y * Math.sin(A);
 	return X;
   }
   static final double computeY(double x, double y, double a){
@@ -134,7 +135,7 @@ public class EntityControl extends AbstractControl {
 	if (!despawn) {
 	  if (spatial instanceof Mover) {
 		Mover mover = (Mover) spatial;
-		debugMover(spatial, tpf);
+//		debugMover(spatial, tpf);
 		PositionFunction function = mover.getPositionFunction();
 		if (function != null) {
 		  double speed = Constants.speed();
@@ -145,7 +146,10 @@ public class EntityControl extends AbstractControl {
 		  double y = function.getY(lifetime * speed, tpf);
 		  double z = function.getZ(lifetime * speed, tpf);
 		  //Vector3f v = new Vector3f((float)x, (float)y, (float)z);
-		  double a = Math.acos(Vector3f.UNIT_Y.dot(mover.getAzimuth().normalize()));
+		  double a = Vector3f.UNIT_Y.angleBetween(mover.getAzimuth().normalize());//Math.acos(Vector3f.UNIT_Y.dot(mover.getAzimuth().normalize()));
+		  if(mover.getAzimuth().x<0){
+			a = 2d*Math.PI-a;
+		  }
 		  
 		  double X = computeX(x, y, a);
 		  double Y = computeY(x,y,a);
@@ -173,6 +177,7 @@ public class EntityControl extends AbstractControl {
 		Damager damager = (Damager) spatial;
 		damager.updateDamageBox();
 	  }
+
 	}
 	//recompute world bound
 	spatial.getWorldBound();
