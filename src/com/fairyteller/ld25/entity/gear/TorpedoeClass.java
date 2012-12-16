@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.fairyteller.ld25.entity;
+package com.fairyteller.ld25.entity.gear;
 
+import com.fairyteller.ld25.entity.EntityClass;
+import com.fairyteller.ld25.entity.Ship;
 import com.fairyteller.ld25.functions.PositionFunction;
 import com.jme3.asset.AssetManager;
 import com.jme3.material.Material;
@@ -25,6 +27,7 @@ public class TorpedoeClass implements EntityClass{
     Material material;
     Material materialHit;
     Geometry geometry;
+	Geometry explosion;
     ColorRGBA color;
 	PositionFunction function = new PositionFunction() {
 
@@ -53,6 +56,9 @@ public class TorpedoeClass implements EntityClass{
     public Geometry getGeometry() {
         return geometry;
     }
+	public Spatial getGeometryExplosion() {
+        return explosion;
+    }
 
     public Material getMaterial() {
         return material;
@@ -74,10 +80,13 @@ public class TorpedoeClass implements EntityClass{
         geometry = new Geometry("missile", box);
         geometry.setModelBound(box.getBound());
 		
+		explosion = new Geometry("Box", box);
+		explosion.setModelBound(box.getBound());
+		
 		material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		materialHit.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		geometry.setQueueBucket(Bucket.Transparent);
-        
+        explosion.setQueueBucket(Bucket.Transparent);
 		
         this.isInit = true;
     }
@@ -114,6 +123,21 @@ public class TorpedoeClass implements EntityClass{
   public PositionFunction getPositionFunction() {
 	return function;
   }
+
+  public boolean isHoming() {
+	throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  long score = 0;
+
+  public void setScore(long score) {
+	this.score = score;
+  }
+  
+  public long getScore() {
+	return this.score;
+  }
     
-    
+  
+  
 }

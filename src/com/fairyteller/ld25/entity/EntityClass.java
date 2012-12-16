@@ -18,6 +18,7 @@ public interface EntityClass {
   public Material getMaterial();
 
   public Spatial getGeometry();
+  public Spatial getGeometryExplosion();
 
   public void init(AssetManager assetManager);
 
@@ -32,4 +33,10 @@ public interface EntityClass {
   public PositionFunction getPositionFunction();
   
   public double getBaseShootDelay();
+  
+  public boolean isHoming();
+  
+  public long getScore();
+  
+  public void setScore(long score);
 }

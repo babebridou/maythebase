@@ -4,6 +4,7 @@
  */
 package com.fairyteller.ld25.entity;
 
+import com.fairyteller.ld25.entity.gear.TorpedoeClass;
 import com.fairyteller.ld25.collision.CollisionZone;
 import com.fairyteller.ld25.control.EntityControl;
 import com.fairyteller.ld25.functions.PositionFunction;
@@ -52,7 +53,7 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner, Destroy
 		this.fuel = entityClass.getBaseFuel();
         this.torpedoeClass = entityClass;
         spawn = (Geometry)entityClass.getGeometry().clone();
-        spawn.setName("torpedoe");
+		
         setOwner(owner);
         setPositionFunction(function);
 //        Vector3f local = ((Spatial)owner).getLocalTranslation().add(owner.getShootOffsets());
@@ -67,13 +68,19 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner, Destroy
         attachChild(spawn);
     }
 
-	public void initPositionAt(Ship spatial){
+	public void initPositionAt(Ship spatial, boolean isHoming){
 		Vector3f local = ((Spatial)spatial).getLocalTranslation().add(spatial.getShootOffsets()).add(owner.getShootOffsets());
         setLocalTranslation(local.x, local.y, local.z);
         setShootOffsetX(local.x);
         setShootOffsetY(local.y);
         setShootOffsetZ(local.z);
-        this.azimuth = spatial.getAim();
+		if(isHoming){
+		  this.azimuth = spatial.getAim();
+		} else {
+		  this.azimuth = spatial.getAzimuth();
+		}
+		String name = "msl_"+spatial.getName();
+        setName(name);
 	}
 	
     public Shooter getOwner() {
@@ -164,7 +171,7 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner, Destroy
     public boolean isDestroyed(){
         return isDestroyed||health<0;
     }
-    public void destroy(){
+    public void destroy(double lifetime){
         System.out.println("Hero destroyed!");
         
     }
@@ -226,4 +233,7 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner, Destroy
         this.justGotHit = justGotHit;
     }
 
+	public long getScore(){
+	  return this.torpedoeClass.getScore();
+	}
 }

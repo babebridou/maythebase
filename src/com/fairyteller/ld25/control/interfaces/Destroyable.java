@@ -13,7 +13,7 @@ import com.jme3.scene.Spatial;
 public interface Destroyable extends Despawner {
     public void hit(int damage);
     public boolean isDestroyed();
-    public void destroy();
+    public void destroy(double lifetime);
     public Spatial getGeometry();
     
     public int getHealth();

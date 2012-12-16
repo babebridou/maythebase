@@ -15,6 +15,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -25,7 +27,9 @@ public class ShipClass implements EntityClass {
     boolean isInit = false;
     Material material;
     Material materialHit;
+	List<Material> materialExplosions;
     Geometry geometry;
+	Geometry explosion;
     ColorRGBA color;
 
     int baseDamage;
@@ -54,11 +58,15 @@ public class ShipClass implements EntityClass {
         this.baseHealth = baseHealth;
 		this.baseFuel = fuel;
 //		this.baseShootDelay = baseShootDelay;
+		this.materialExplosions = new ArrayList<Material>();
     }
     
 
     public Spatial getGeometry() {
         return geometry;
+    }
+	public Spatial getGeometryExplosion() {
+        return explosion;
     }
 
     public Material getMaterial() {
@@ -71,32 +79,70 @@ public class ShipClass implements EntityClass {
         Box box = new Box(Vector3f.ZERO, 0.40f, 0.40f, 0f);
         if(geometry==null)
         geometry = new Geometry("Box", box);
+		explosion = new Geometry("Box", box);
         if(material==null)
         material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		
         materialHit = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Texture textureHit = assetManager.loadTexture("Textures/expl32-0.png");
         Texture texture = assetManager.loadTexture("Textures/sample32.png");
-		
+		for(int i = 0; i<6;i++){
+		  Texture tex = assetManager.loadTexture("Textures/expl32-"+i+".png");
+		  Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		  mat.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		  mat.setTexture("ColorMap", tex);
+		  materialExplosions.add(mat);
+		}
         if (color != null) {
             material.setColor("Color", color);
+//			materialHit.setColor("Color", color);
         }
-        materialHit.setColor("Color", ColorRGBA.White);
+//        materialHit.setColor("Color", ColorRGBA.White);
+		
+		materialHit.setTexture("ColorMap", textureHit);
         material.setTexture("ColorMap", texture);
         geometry.setMaterial(material);
         geometry.setModelBound(box.getBound());
+		explosion.setMaterial(materialHit);
+		explosion.setModelBound(box.getBound());
 		
 		material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		materialHit.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		geometry.setQueueBucket(Bucket.Transparent);
-        
+        explosion.setQueueBucket(Bucket.Transparent);
+		
 		isInit = true;
     }
     
+	public void animateMyExplosion(Ship ship, double slerp){
+	  if(ship.getShipHitSpatial()==null){
+		Spatial newExplosion = explosion.clone();
+		ship.setShipHitSpatial(newExplosion);
+		ship.attachChild(newExplosion);
+	  }
+	  int index = (int)Math.round(slerp*5.0d);
+	  if(index > materialExplosions.size()-4){
+		if(ship.hasChild(ship.getGeometry())){
+		  ship.detachChild(ship.getGeometry());
+		}
+	  }
+	  ship.getShipHitSpatial().setMaterial(materialExplosions.get(index%6));
+	}
+	
     public void toggle(boolean hit, Spatial spatial){
         if(hit){
-            spatial.setMaterial(materialHit);
+		  if((spatial instanceof Ship) && ((Ship)spatial).getShipHitSpatial()==null){
+			  Spatial newExplosion = explosion.clone();
+			  ((Ship)spatial).attachChild(newExplosion);
+			  ((Ship)spatial).setShipHitSpatial(newExplosion);
+			}
+//		    spatial.setMaterial(materialHit);
         } else {
-            spatial.setMaterial(material);
+			if((spatial instanceof Ship) && ((Ship)spatial).getShipHitSpatial()!=null){
+			  ((Ship)spatial).detachChild(((Ship)spatial).getShipHitSpatial());
+			  ((Ship)spatial).setShipHitSpatial(null);
+			}
+//            spatial.setMaterial(material);
         }
     }
 
@@ -128,8 +174,21 @@ public class ShipClass implements EntityClass {
   public PositionFunction getPositionFunction() {
 	return null;
   }
+
+  public boolean isHoming() {
+	return true;
+  }
   
   
+  long score;
+
+  public long getScore() {
+	return this.score;
+  }
+
+  public void setScore(long score) {
+	this.score = score;
+  }
   
 	
 }
