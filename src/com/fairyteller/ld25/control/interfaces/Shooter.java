@@ -4,6 +4,7 @@
  */
 package com.fairyteller.ld25.control.interfaces;
 
+import com.fairyteller.ld25.entity.Team;
 import com.jme3.math.Vector3f;
 
 /**
@@ -16,4 +17,5 @@ public interface Shooter {
     public Vector3f getShootOffsets();
     public Vector3f getAim();
     public int getDamage();
+	public Team getTeam();
 }

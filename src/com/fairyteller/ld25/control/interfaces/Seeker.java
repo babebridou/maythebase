@@ -12,4 +12,5 @@ import com.jme3.math.Vector3f;
  */
 public interface Seeker {
     public Vector3f seek();
+	public void aim(Vector3f direction);
 }

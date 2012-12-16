@@ -13,9 +13,14 @@ import com.jme3.scene.Spatial;
  * @author Tom
  */
 public interface EntityClass {
-    public Material getMaterial();
-    public Spatial getGeometry();
-    public void init(AssetManager assetManager);
-    public int getBaseDamage();
-    public int getBaseHealth();
+
+  public Material getMaterial();
+
+  public Spatial getGeometry();
+
+  public void init(AssetManager assetManager);
+
+  public int getBaseDamage();
+
+  public int getBaseHealth();
 }

@@ -10,9 +10,9 @@ package com.fairyteller.ld25.functions;
  */
 public interface PositionFunction {
 
-    public double getX(double t);
+    public double getX(double t, double dt);
 
-    public double getY(double t);
+    public double getY(double t, double dt);
 
-    public double getZ(double t);
+    public double getZ(double t, double dt);
 }

@@ -105,7 +105,7 @@ public class CollisionZone {
     public void check(Ship hero) {
         Set<Shooter> aces = getEntities();
         for (Shooter s : aces) {
-            if (s != hero) {
+            if (s.getTeam() != hero.getTeam()) {
                 CollisionResults potentialResults = new CollisionResults();
                 BoundingVolume potential = potentialZone.get(s);
                 if (potential != null && hero.getGeometry() != null) {

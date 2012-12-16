@@ -58,6 +58,7 @@ public class Torpedoe extends Node implements Mover, Damager, Despawner, Destroy
         setShootOffsetY(local.y);
         setShootOffsetZ(local.z);
         this.azimuth = owner.getAim();
+//		rotate(0, 0, getAzimuth().angleBetween(Vector3f.UNIT_Y));
         addControl(new EntityControl());
         spawn.setMaterial(entityClass.getMaterial());
         attachChild(spawn);

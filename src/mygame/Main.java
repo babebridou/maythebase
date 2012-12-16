@@ -2,6 +2,7 @@ package mygame;
 
 import com.fairyteller.ld25.collision.CollisionZone;
 import com.fairyteller.ld25.entity.ShipClass;
+import com.fairyteller.ld25.entity.Team;
 import com.fairyteller.ld25.entity.TorpedoeClass;
 import com.fairyteller.ld25.functions.PositionFunction;
 import com.fairyteller.ld25.entity.Wave;
@@ -18,7 +19,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Main extends SimpleApplication {
-
+	Team red;
+	Team blue;
     Wave heroWave;
 //    Ship hero;
     LinkedList<Wave> waves;
@@ -34,24 +36,26 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
+	  red = new Team();
+	  blue = new Team();
         waves = new LinkedList<Wave>();
         setPauseOnLostFocus(false);
 
         PositionFunction functionHeroWave = new PositionFunction() {
 
-            public double getX(double t) {
+            public double getX(double t, double tpf) {
                 return Math.cos(t % (2d * Math.PI)) * 3.0f;
             }
 
-            public double getY(double t) {
+            public double getY(double t, double tpf) {
                 return 0d;
             }
 
-            public double getZ(double t) {
+            public double getZ(double t, double tpf) {
                 return 0d;
             }
         };
-        heroWave = new Wave("hero", 1, functionHeroWave, 0d, 0d, 3d, 0d, new TorpedoeClass(ColorRGBA.Cyan), new ShipClass(ColorRGBA.Cyan, 3, 100), Vector3f.UNIT_Y.negate());
+        heroWave = new Wave(blue, "hero", 1, functionHeroWave, 0d, 0d, 3d, 0d, new TorpedoeClass(ColorRGBA.Cyan), new ShipClass(ColorRGBA.Cyan, 3, 100), Vector3f.UNIT_Y.negate());
         heroWave.create(assetManager);
 
 //        hero = new Ship("hero");
@@ -60,19 +64,19 @@ public class Main extends SimpleApplication {
 
         function = new PositionFunction() {
 
-            public double getX(double t) {
-                return Math.cos(t % (2d * Math.PI));
+            public double getX(double t, double tpf) {
+                return 0d;//Math.cos(t % (2d * Math.PI));
             }
 
-            public double getY(double t) {
-                return Math.sin(t % (2d * Math.PI));
+            public double getY(double t, double tpf) {
+                return 0d;//Math.sin(t % (2d * Math.PI));
             }
 
-            public double getZ(double t) {
+            public double getZ(double t, double tpf) {
                 return 0d;
             }
         };
-        Wave wave = new Wave("me", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
+        Wave wave = new Wave(red, "me", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
         wave.create(assetManager);
         waves.push(wave);
         flyCam.setEnabled(false);
@@ -98,6 +102,8 @@ public class Main extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+		red.pickTarget(heroWave);
+		
         CollisionZone.getInstance().check(heroWave);
         for (Wave wave : waves) {
             CollisionZone.getInstance().check(wave);
@@ -108,7 +114,9 @@ public class Main extends SimpleApplication {
         if (heroWave != null) {
             heroWave.update(tpf, speed, rootNode);
         }
-
+		if(waves.size()>0){
+		  blue.pickTarget(waves.getFirst());
+		}
         for (Wave wave : waves) {
             wave.update(tpf, speed, rootNode);
         }
@@ -128,12 +136,12 @@ public class Main extends SimpleApplication {
             } else {
                 if (isRunning) {
                     if (name.equals("Wave0")&& !keyPressed) {
-                        Wave wave = new Wave("wave0", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
+                        Wave wave = new Wave(red, "wave0", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
                         wave.create(assetManager);
                         waves.push(wave);
                     }
                     if (name.equals("Wave1")&& !keyPressed) {
-                        Wave wave = new Wave("wave1", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
+                        Wave wave = new Wave(red, "wave1", 4, function, 1d, 3d, -2d, 0, new TorpedoeClass(ColorRGBA.Red), new ShipClass(ColorRGBA.Red), Vector3f.UNIT_Y);
                         wave.create(assetManager);
                         waves.push(wave);
                     }
