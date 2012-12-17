@@ -4,6 +4,7 @@
  */
 package com.fairyteller.ld25.gui;
 
+import com.fairyteller.ld25.entity.Constants;
 import com.fairyteller.ld25.levels.AbstractLevel;
 import com.fairyteller.ld25.levels.Level01;
 import com.jme3.app.Application;
@@ -20,8 +21,6 @@ import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.logging.Level;
-import mygame.Constants;
 
 /**
  *

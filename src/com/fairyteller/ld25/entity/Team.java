@@ -14,7 +14,7 @@ import java.util.List;
 public class Team {
   String name;
 
-  public String getName() {
+  public String getName() { 
 	return name;
   }
 

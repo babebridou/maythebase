@@ -5,16 +5,12 @@
 package com.fairyteller.ld25.gui;
 
 import com.fairyteller.ld25.collision.CollisionZone;
-import com.fairyteller.ld25.entity.EntityClass;
+import com.fairyteller.ld25.entity.Constants;
 import com.fairyteller.ld25.entity.Ship;
 import com.fairyteller.ld25.entity.Wave;
-import com.fairyteller.ld25.functions.PositionFunction;
 import com.jme3.app.SimpleApplication;
-import com.jme3.math.Vector3f;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import mygame.Constants;
 
 /**
  *

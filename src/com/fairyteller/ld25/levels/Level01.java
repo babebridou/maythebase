@@ -4,15 +4,8 @@
  */
 package com.fairyteller.ld25.levels;
 
-import com.fairyteller.ld25.entity.EntityClass;
-import com.fairyteller.ld25.entity.Wave;
-import com.fairyteller.ld25.functions.PositionFunction;
-import com.jme3.math.Vector3f;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import mygame.Constants;
 
 /**
  *

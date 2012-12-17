@@ -16,7 +16,7 @@ import com.jme3.scene.Spatial;
 public interface EntityClass {
 
   public Material getMaterial();
-
+ 
   public Spatial getGeometry();
   public Spatial getGeometryExplosion();
 

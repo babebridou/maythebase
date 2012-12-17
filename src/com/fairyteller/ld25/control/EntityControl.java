@@ -11,6 +11,7 @@ import com.fairyteller.ld25.control.interfaces.Destroyable;
 import com.fairyteller.ld25.control.interfaces.Mover;
 import com.fairyteller.ld25.control.interfaces.Seeker;
 import com.fairyteller.ld25.control.interfaces.Shooter;
+import com.fairyteller.ld25.entity.Constants;
 import com.fairyteller.ld25.entity.Ship;
 import com.fairyteller.ld25.entity.Torpedoe;
 import com.jme3.renderer.RenderManager;
@@ -18,7 +19,6 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
-import mygame.Constants;
 import com.jme3.math.Vector3f;
 
 /**
